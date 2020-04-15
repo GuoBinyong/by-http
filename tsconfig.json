@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ESNEXT",
+    "module": "commonjs",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext",
+      "ScriptHost"
+    ],
+    "strict": true,
+    "declaration":true
+  },
+  "exclude":[
+    "dist",
+    "dev"
+  ]
+}
