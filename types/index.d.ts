@@ -22,18 +22,18 @@ import "es-expand"
 declare const _doneAgainProxyProps: string[];
 
 
-export type PublicDataGet = (this: HttpRequest, reqOptions: ReqOptions) => any;
+export type PublicDataGet = (this: ByHttp, reqOptions: ReqOptions) => any;
 export type PublicData = PublicDataGet | any;
 
-export type ReqTransformer = (this: HttpRequest, reqOptions: ReqOptions) => ReqOptions;
+export type ReqTransformer = (this: ByHttp, reqOptions: ReqOptions) => ReqOptions;
 export type ReqTransforms = ReqTransformer[];
 
-export type ResTransformer = (this: HttpRequest, preReturn: any, reqOptions: ReqOptions) => any;
+export type ResTransformer = (this: ByHttp, preReturn: any, reqOptions: ReqOptions) => any;
 export type ResTransforms = ResTransformer[];
 
-export type MainDataGet<ResponseData = any> = (this: HttpRequest, responseData: ResponseData) => any;
+export type MainDataGet<ResponseData = any> = (this: ByHttp, responseData: ResponseData) => any;
 
-export type PromptHandle<Data> = (this: HttpRequest, info: Data | Error, success: boolean) => void;
+export type PromptHandle<Data> = (this: ByHttp, info: Data | Error, success: boolean) => void;
 
 export type HttpResponse<Data = any> = AxiosResponse<Data>;
 
@@ -44,7 +44,7 @@ export interface LoadingHandleAddInfo {
   globalShowCount: number;
   doneCount: NamedDoneCount;
   doneCountManager: NamedDoneCountManager;
-  http: HttpRequest;
+  http: ByHttp;
 }
 
 
@@ -53,15 +53,15 @@ export interface EndLoadingHandleAddInfo extends LoadingHandleAddInfo {
 }
 
 
-export type StartLoadingHandle = (this: HttpRequest, loadText: string | null | undefined, reqOptions: ReqOptions, loadInfo: LoadingHandleAddInfo) => number | void
+export type StartLoadingHandle = (this: ByHttp, loadText: string | null | undefined, reqOptions: ReqOptions, loadInfo: LoadingHandleAddInfo) => number | void
 
-export type EndLoadingHandle<Data = any> = (this: HttpRequest, succeed: boolean, reqOptions: ReqOptions, resData: Data, loadInfo: EndLoadingHandleAddInfo) => number | void
+export type EndLoadingHandle<Data = any> = (this: ByHttp, succeed: boolean, reqOptions: ReqOptions, resData: Data, loadInfo: EndLoadingHandleAddInfo) => number | void
 
-export type StartRequestHandle = (this: HttpRequest, reqOptions: ReqOptions, addInfo: RequestHandleAddInfo) => void;
+export type StartRequestHandle = (this: ByHttp, reqOptions: ReqOptions, addInfo: RequestHandleAddInfo) => void;
 
-export type EndRequestHandle<Data = any> = (this: HttpRequest, succeed: boolean, reqOptions: ReqOptions, resData: Data, addInfo: RequestHandleAddInfo) => void;
+export type EndRequestHandle<Data = any> = (this: ByHttp, succeed: boolean, reqOptions: ReqOptions, resData: Data, addInfo: RequestHandleAddInfo) => void;
 
-export type DependResultHandle = (this: HttpRequest, result: any, reqOptions: ReqOptions) => ReqOptions | boolean | null | undefined;
+export type DependResultHandle = (this: ByHttp, result: any, reqOptions: ReqOptions) => ReqOptions | boolean | null | undefined;
 
 export type HttpStatus = number | string;
 
@@ -85,7 +85,7 @@ export interface HttpConfig<Data = any> extends BaseConfig<Data>,AxiosRequestCon
   mainDataGet?: MainDataGet<Data>;    //如果 mainData 设置为 true，当请求成功时，会返回被 mainDataGet 处理过的数据；
 
   promptHandle?: PromptHandle<Data>;    //请求成功或者失败的回调函数
-  startLoadingHandle?: StartLoadingHandle; //(loadText:string,reqOptions:ReqOptions,{showCount:number,globalShowCount:number,doneCount:DoneCount,doneCountManager:DoneCountManager,http:HttpRequest})=>showCountIncrStep : number | undefined  开始显示 loading 的回调函数；返回 加载状态指示显示计数 loadingShowCount 的 增加量；
+  startLoadingHandle?: StartLoadingHandle; //(loadText:string,reqOptions:ReqOptions,{showCount:number,globalShowCount:number,doneCount:DoneCount,doneCountManager:DoneCountManager,http:ByHttp})=>showCountIncrStep : number | undefined  开始显示 loading 的回调函数；返回 加载状态指示显示计数 loadingShowCount 的 增加量；
   endLoadingHandle?: EndLoadingHandle;   //结束显示 loading 的回调函数；返回 加载状态指示显示计数 loadingShowCount 的 减少量；
   startRequestHandle?: StartRequestHandle;     //请求开始的回调函数
   endRequestHandle?: EndRequestHandle    //请求结束的回调函数；
@@ -109,7 +109,7 @@ export interface RequestHandleAddInfo {
   requestDoneCount: NamedDoneCount;
   requestDoneCountOnFail: NamedDoneCount;
   requestDoneCountManager: NamedDoneCountManager;
-  http: HttpRequest;
+  http: ByHttp;
 }
 
 
@@ -136,7 +136,7 @@ export interface BaseConfig<Data> {
   dependent?: boolean;   //设置请求是否依赖 dependentPro
   dependResultHandle?: DependResultHandle;    //依赖结果处理器，当请求有依赖时，在 依赖解决之后 请求解决之前 调用该处理器；
 
-  addInfoInRes?: boolean;    //可选；默认值：false；是否在响应数据中添加额外的信息； 当值为 true 时，会在失败 或 成功时返回一个数组，数据的中第1个元素就是请求真正的响应数据 或 错误信息，第2个元素是这种格式的对象 : {doneCount:DoneCount,doneCountManager:DoneCountManager,http:HttpRequest}
+  addInfoInRes?: boolean;    //可选；默认值：false；是否在响应数据中添加额外的信息； 当值为 true 时，会在失败 或 成功时返回一个数组，数据的中第1个元素就是请求真正的响应数据 或 错误信息，第2个元素是这种格式的对象 : {doneCount:DoneCount,doneCountManager:DoneCountManager,http:ByHttp}
 
 
   validateHttpStatus?: ValidateHttpStatus;   //定义 有效的 http返回状态码，可以是有效状态码 或 有效状态码的数组，也可以是返回表示状态码是否有效的布尔值的函数，如果返回true（或者设置成null/undefined），promise将会resolve；其他的promise将reject。
@@ -174,7 +174,7 @@ export interface UploadReqOptions<Data = any> extends ReqOptions<Data>{
 
 
 
-export class HttpRequest<Data = any> {
+export class ByHttp<Data = any> {
   /**
    * 创建HTTP请求对象
    * @param httpConfig : Object  HTTP的配置对象，
@@ -196,8 +196,8 @@ export class HttpRequest<Data = any> {
    * showLoading  : boolean    是否启用加载状态指示；默认值为 true
    * loadingDelay  : number    加载状态指示的延时显示时间，单位：毫秒；默认值：0
    * loadText  : string   加载的提示文本
-   * startLoadingHandle : (loadText:string,reqOptions:ReqOptions,{showCount:number,globalShowCount:number,doneCount:DoneCount,doneCountManager:DoneCountManager,http:HttpRequest})=>showCountIncrStep : number | undefined  开始显示 loading 的回调函数；返回 加载状态指示显示计数 loadingShowCount 的 增加量；
-   * endLoadingHandle  : (succeed,reqOptions:ReqOptions,resData:ResponseData,{showCount:number,globalShowCount:number,doneCount:DoneCount,doneCountOnFail:DoneCount,doneCountManager:DoneCountManager,http:HttpRequest})=>showCountDecrStep : number | undefined   结束显示 loading 的回调函数；返回 加载状态指示显示计数 loadingShowCount 的 减少量；
+   * startLoadingHandle : (loadText:string,reqOptions:ReqOptions,{showCount:number,globalShowCount:number,doneCount:DoneCount,doneCountManager:DoneCountManager,http:ByHttp})=>showCountIncrStep : number | undefined  开始显示 loading 的回调函数；返回 加载状态指示显示计数 loadingShowCount 的 增加量；
+   * endLoadingHandle  : (succeed,reqOptions:ReqOptions,resData:ResponseData,{showCount:number,globalShowCount:number,doneCount:DoneCount,doneCountOnFail:DoneCount,doneCountManager:DoneCountManager,http:ByHttp})=>showCountDecrStep : number | undefined   结束显示 loading 的回调函数；返回 加载状态指示显示计数 loadingShowCount 的 减少量；
    *
    * startRequestHandle : (reqOptions,addInfo:RequestHandleAddInfo)=>Void     请求开始的回调函数
    * endRequestHandle :  (succeed,reqOptions:ReqOptions,resData:ResponseData,addInfo:RequestHandleAddInfo)=>Void    请求结束的回调函数；
@@ -217,7 +217,7 @@ export class HttpRequest<Data = any> {
    * validateDataStatus ?: (responseData: any,reqOptions:ReqOptions) => boolean   定义 后台数据的返回的状态码的 的有效性，如果返回true（或者设置成null/undefined），promise将会resolve；其他的promise将reject。
    *
    *
-   * addInfoInRes ?: boolean    可选；默认值：false；是否在响应数据中添加额外的信息； 当值为 true 时，会在失败 或 成功时返回一个数组，数据的中第1个元素就是请求真正的响应数据 或 错误信息，第2个元素是这种格式的对象 : {doneCount:DoneCount,doneCountManager:DoneCountManager,http:HttpRequest}
+   * addInfoInRes ?: boolean    可选；默认值：false；是否在响应数据中添加额外的信息； 当值为 true 时，会在失败 或 成功时返回一个数组，数据的中第1个元素就是请求真正的响应数据 或 错误信息，第2个元素是这种格式的对象 : {doneCount:DoneCount,doneCountManager:DoneCountManager,http:ByHttp}
    * doneAgain ?: HttpDoneAgainOptions    可选；完成计数的配置对象；如果 loadingDoneAgain 或 requestDoneAgain 未配置，则会采用 doneAgain；
    * loadingDoneAgain ?: HttpDoneAgainOptions   可选；loading完成计数的配置对象；如果 loadingDoneAgain  未配置，则会采用 doneAgain；
    * requestDoneAgain ?: HttpDoneAgainOptions   可选；request完成计数的配置对象；如果 requestDoneAgain  未配置，则会采用 doneAgain；
@@ -233,7 +233,7 @@ export class HttpRequest<Data = any> {
         loadText:string,showCount:number,globalShowCount:number,,
         loadingDoneAgain,loadingDoneCount:DoneCount,loadingDoneCountOnFail:DoneCount,loadingDoneCountManager:DoneCountManager,
         requestDoneAgain,requestDoneCount:DoneCount,requestDoneCountOnFail:DoneCount,requestDoneCountManager:DoneCountManager,
-        http:HttpRequest}
+        http:ByHttp}
    *
    *
    *
@@ -538,7 +538,7 @@ export class HttpRequest<Data = any> {
    * validateHttpStatus ?: number | string | Array<status> | (status: number) => boolean    定义 有效的 http返回状态码，可以是有效状态码 或 有效状态码的数组，也可以是返回表示状态码是否有效的布尔值的函数，如果返回true（或者设置成null/undefined），promise将会resolve；其他的promise将reject。
    * validateDataStatus ?: (responseData: any,reqOptions:ReqOptions) => boolean   定义 后台数据的返回的状态码的 的有效性，如果返回true（或者设置成null/undefined），promise将会resolve；其他的promise将reject。
    *
-   * addInfoInRes ?: boolean    可选；默认值：false；是否在响应数据中添加额外的信息； 当值为 true 时，会在失败 或 成功时返回一个数组，数据的中第1个元素就是请求真正的响应数据 或 错误信息，第2个元素是这种格式的对象 : {doneCount:DoneCount,doneCountManager:DoneCountManager,http:HttpRequest}
+   * addInfoInRes ?: boolean    可选；默认值：false；是否在响应数据中添加额外的信息； 当值为 true 时，会在失败 或 成功时返回一个数组，数据的中第1个元素就是请求真正的响应数据 或 错误信息，第2个元素是这种格式的对象 : {doneCount:DoneCount,doneCountManager:DoneCountManager,http:ByHttp}
    * doneAgain ?: HttpDoneAgainOptions    可选；完成计数的配置对象；如果 loadingDoneAgain 或 requestDoneAgain 未配置，则会采用 doneAgain；
    * loadingDoneAgain ?: HttpDoneAgainOptions   可选；loading完成计数的配置对象；如果 loadingDoneAgain  未配置，则会采用 doneAgain；
    * requestDoneAgain ?: HttpDoneAgainOptions   可选；request完成计数的配置对象；如果 requestDoneAgain  未配置，则会采用 doneAgain；
@@ -770,4 +770,4 @@ export class HttpRequest<Data = any> {
 }
 
 
-export default HttpRequest;
+export default ByHttp;
