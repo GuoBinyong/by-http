@@ -1,6 +1,6 @@
 {
   "name": "by-http",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "by-http 是专门用于发 Http 请求的库",
   "main": "dist/by-http.umd.js",
   "module": "src/index",
