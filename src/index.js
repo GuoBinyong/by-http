@@ -84,9 +84,9 @@ export class HttpRequest {
    * AutoDeleteTarget = "ForcedDone" | "RealDone" | "Done"
    * AutoDeleteMode = "Delay" | "Immediately" | "No"
    */
-  constructor({reqTransforms, publicData, resTransforms, mainData, mainDataGet, validateHttpStatus, validateDataStatus, successPrompt, failPrompt, promptHandle, showLoading = true,loadingDelay=0, loadText, startLoadingHandle, endLoadingHandle, dependent, dependentPro, dependResultHandle,addInfoInRes,doneAgain,loadingDoneAgain,requestDoneAgain,startRequestHandle,endRequestHandle, ...otherConfig}) {
+  constructor({reqTransforms, publicData, resTransforms, mainData, mainDataGet, validateHttpStatus, validateDataStatus, successPrompt, failPrompt, promptHandle, showLoading = true,loadingDelay=0, loadText, startLoadingHandle, endLoadingHandle, dependent, dependentPro, dependResultHandle,addInfoInRes,doneAgain,loadingDoneAgain,requestDoneAgain,startRequestHandle,endRequestHandle,header, ...otherConfig}) {
 
-    let defaultConfig = {...otherConfig};
+    let defaultConfig = {headers:header,...otherConfig};
 
     if (validateHttpStatus) {
       defaultConfig.validateStatus = validateHttpStatus;
@@ -833,7 +833,7 @@ export class HttpRequest {
 
     if (dependent) {
       return this.dependentPro.then((dependentResult) => {
-        let depReqOptions = dependResultHandle && dependResultHandle(dependentResult, reqOptions);
+        let depReqOptions = dependResultHandle && dependResultHandle.call(this,dependentResult, reqOptions);
 
         if (depReqOptions == false) {
           return Promise.reject("请求被依赖阻止！")
@@ -852,8 +852,8 @@ export class HttpRequest {
   _request(reqOptions) {
     let addPublicOptions = this.addPublicData(reqOptions);
 
-    reqOptions = this.reqTransforms.reduce(function (options, transform) {
-      let newOptions = transform(options);
+    reqOptions = this.reqTransforms.reduce( (options, transform)=> {
+      let newOptions = transform.call(this,options);
       return newOptions;
     }, addPublicOptions);
 
@@ -890,11 +890,13 @@ export class HttpRequest {
       let valHttpStatus = validateHttpStatus;
       if (Array.isArray(validateHttpStatus)){
         valHttpStatus = function (status) {
-          return validateHttpStatus.includes(status);
+          return validateHttpStatus.some(function (valiStatus) {
+            return valiStatus == status || Number(valiStatus) == Number(status) || String(valiStatus) == String(status)
+          });
         };
       } else if (typeof validateHttpStatus != "function"){
         valHttpStatus = function (status) {
-          return validateHttpStatus == status;
+          return validateHttpStatus == status  || Number(validateHttpStatus) == Number(status) || String(validateHttpStatus) == String(status) ;
         };
       }
       reqConfig.validateStatus = valHttpStatus;
@@ -912,7 +914,7 @@ export class HttpRequest {
         var performStartLoadHandle = ()=>{
           loadingIsStarted = true;
 
-          var step = this.startLoadingHandle(loadText, reqOptions,{showCount:this.loadingShowCount,globalShowCount:this.constructor.loadingShowCount,doneCount:loadingDoneCount,doneCountManager:loadingDoneCountManager,http:this});
+          var step = this.startLoadingHandle.call(this,loadText, reqOptions,{showCount:this.loadingShowCount,globalShowCount:this.constructor.loadingShowCount,doneCount:loadingDoneCount,doneCountManager:loadingDoneCountManager,http:this});
           this.incrLoadingShowCount(step);
         };
 
@@ -963,7 +965,7 @@ export class HttpRequest {
 
         if (loadingIsStarted && this.endLoadingHandle) {
           //mark:关闭加载指示器
-          var step = this.endLoadingHandle(succeed,reqOptions,respData,{showCount:this.loadingShowCount,globalShowCount:this.constructor.loadingShowCount,doneCount:loadingDoneCount,doneCountOnFail:loadingDoneCountOnFail,doneCountManager:loadingDoneCountManager,http:this});
+          var step = this.endLoadingHandle.call(this,succeed,reqOptions,respData,{showCount:this.loadingShowCount,globalShowCount:this.constructor.loadingShowCount,doneCount:loadingDoneCount,doneCountOnFail:loadingDoneCountOnFail,doneCountManager:loadingDoneCountManager,http:this});
           this.decrLoadingShowCount(step);
         }
 
@@ -990,15 +992,15 @@ export class HttpRequest {
 
     axiosPromise = axiosPromise.then((response) => {
 
-      response = this.resTransforms.reduce(function (res, transform) {
-        let newRes = transform(res, reqOptions);
+      response = this.resTransforms.reduce( (res, transform)=> {
+        let newRes = transform.call(this,res, reqOptions);
         return newRes;
       }, response);
 
       let respData = response.data;
 
 
-      if (validateDataStatus && !validateDataStatus(respData,reqOptions)) {
+      if (validateDataStatus && !validateDataStatus.call(this,respData,reqOptions)) {
         throw respData
       }
 
