@@ -51,7 +51,7 @@ var projectConfig = {
      {
       target: "web",  //设置被构建的包的运行环境
       filename: '[name].script.js',  //输出的包名
-      // library: "",  //库名
+      library: "ByHttp",  //库名
       module: "window",  //将包挂载到window中与库名同名的属性上
       externals: {},  //不排除何依赖，即将所有依赖都打包进库
     },
