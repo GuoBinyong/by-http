@@ -154,8 +154,8 @@ export interface BaseConfig<Data> {
 export interface ReqOptions<Data = any> extends BaseConfig<Data>,AxiosRequestConfig {
   urlPath?: string;    //url路径
   method?: Method;    //请求方式
-  data?: object;    //请求的数据，这些数据将被放入请求体中
-  params?: object;    //请求的参数，这些参数将会被序列化放入请求的URL后面
+  data?: any;    //请求的数据，这些数据将被放入请求体中
+  params?: any;    //请求的参数，这些参数将会被序列化放入请求的URL后面
 
 }
 
@@ -174,7 +174,7 @@ export interface UploadReqOptions<Data = any> extends ReqOptions<Data>{
 
 
 
-export class ByHttp<Data = any> {
+export default class ByHttp<Data = any> {
   /**
    * 创建HTTP请求对象
    * @param httpConfig : Object  HTTP的配置对象，
@@ -768,6 +768,3 @@ export class ByHttp<Data = any> {
 
 
 }
-
-
-export default ByHttp;

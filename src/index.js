@@ -7,7 +7,7 @@ import "es-expand"
  */
 const _doneAgainProxyProps = ["urlAsDoneCountName","conflictPolicy","autoIncrTotalIfRepeat","autoDeleteTarget","autoDeleteMode","clearDelay"];
 
-export class ByHttp {
+export default class ByHttp {
   /**
    * 创建HTTP请求对象
    * @param httpConfig : Object  HTTP的配置对象，
@@ -1308,6 +1308,3 @@ export class ByHttp {
 
 
 }
-
-
-export default ByHttp;
