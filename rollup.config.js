@@ -16,9 +16,9 @@ import pkg from './package.json';
 function getDependencieNames(packageConf){
 	return Object.keys(Object.assign({},packageConf.dependencies,packageConf.optionalDependencies,packageConf.peerDependencies))
 }
-  
-  
-/* 
+
+
+/*
 注意：
 - rollup 默认翻用的不是 node 的模块解析算法，所以，rollup 找不到由 npm 安装的依赖（模块），所以 由 npm 安装的依赖也不被被要想构建进最终的输出包中；这样也起到了排除 node_modules 中模块的效果；排除模块的功能 由 external 选项指定
 - @rollup/plugin-node-resolve 插件可让 rollup 用 node 的模块解析算法来查找模块；
@@ -28,13 +28,14 @@ export default [
 	// browser-friendly UMD build
 	{
 		input: 'src/index',
+		external: ["axios"],  //移除依赖包
 		output: {
 			name: "ByHttp",  //驼峰格式的 pkg.name
-			file: pkg.browser,
+			file: pkg.browser || `dist/${pkg.name}.umd.js`,
 			format: 'umd'
 		},
 		plugins: [
-			builtins(),
+			// builtins(), //为浏览器环境的库提供 node 内建环境 的 shims（垫片）
 			resolve(), // 使用node解析算法查找模块
 			json(),
 			commonjs(), // 将依赖的模块从 CommonJS 模块规范转换成 ES2015 模块规范
