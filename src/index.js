@@ -84,7 +84,7 @@ export default class ByHttp {
    * AutoDeleteTarget = "ForcedDone" | "RealDone" | "Done"
    * AutoDeleteMode = "Delay" | "Immediately" | "No"
    */
-  constructor({reqTransforms, publicData, resTransforms, mainData, mainDataGet, validateHttpStatus, validateDataStatus, successPrompt, failPrompt, promptHandle, showLoading = true,loadingDelay=0, loadText, startLoadingHandle, endLoadingHandle, dependent, dependentPro, dependResultHandle,addInfoInRes,doneAgain,loadingDoneAgain,requestDoneAgain,startRequestHandle,endRequestHandle,header, ...otherConfig}) {
+  constructor({reqTransforms, publicData, resTransforms, mainData, mainDataGet, validateHttpStatus, validateDataStatus, successPrompt, failPrompt, promptHandle, showLoading = true,loadingDelay=0, loadText, startLoadingHandle, endLoadingHandle, dependent, dependentPro, dependResultHandle,addInfoInRes,doneAgain,loadingDoneAgain,requestDoneAgain,startRequestHandle,endRequestHandle,header, ...otherConfig}={}) {
 
     let defaultConfig = {headers:header,...otherConfig};
 
