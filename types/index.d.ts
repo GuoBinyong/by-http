@@ -16,12 +16,13 @@ import {
 
 import "es-expand"
 
+
 /**
  * loadingDoneAgain 和 requestDoneAgain 配置对象 代理 DoneCountManager 属性列表
  */
 declare const _doneAgainProxyProps: string[];
 
-
+export {Method}
 export type PublicDataGet = (this: ByHttp, reqOptions: ReqOptions) => any;
 export type PublicData = PublicDataGet | any;
 
