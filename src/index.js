@@ -1,6 +1,7 @@
 import axios from 'axios'
 import {NamedDoneCountManager} from 'done-count'
 import "es-expand"
+import {defineProxyProperties} from "com-tools"
 
 /**
  * loadingDoneAgain 和 requestDoneAgain 配置对象 代理 DoneCountManager 属性列表
@@ -300,7 +301,7 @@ export default class ByHttp {
    * 设置 和 获取 全局默认的 loadingDoneAgain 配置
    */
   static get loadingDoneAgain(){
-    return Object.defineProxyProperties({},this.loadingDoneCountManager,_doneAgainProxyProps);
+    return defineProxyProperties({},this.loadingDoneCountManager,_doneAgainProxyProps);
   }
 
   static set loadingDoneAgain(newValue){
@@ -313,7 +314,7 @@ export default class ByHttp {
    * 设置 和 获取 默认的 loadingDoneAgain 配置
    */
   get loadingDoneAgain(){
-    return Object.defineProxyProperties({},this.loadingDoneCountManager,_doneAgainProxyProps);
+    return defineProxyProperties({},this.loadingDoneCountManager,_doneAgainProxyProps);
   }
 
   set loadingDoneAgain(newValue){
@@ -405,7 +406,7 @@ export default class ByHttp {
    * 设置 和 获取 全局默认的 requestDoneAgain 配置
    */
   static get requestDoneAgain(){
-    return Object.defineProxyProperties({},this.requestDoneCountManager,_doneAgainProxyProps);
+    return defineProxyProperties({},this.requestDoneCountManager,_doneAgainProxyProps);
   }
 
   static set requestDoneAgain(newValue){
@@ -419,7 +420,7 @@ export default class ByHttp {
    * 设置 和 获取 默认的 requestDoneAgain 配置
    */
   get requestDoneAgain(){
-    return Object.defineProxyProperties({},this.requestDoneCountManager,_doneAgainProxyProps);
+    return defineProxyProperties({},this.requestDoneCountManager,_doneAgainProxyProps);
   }
 
   set requestDoneAgain(newValue){
